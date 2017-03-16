@@ -65,33 +65,25 @@ Attachments can have many types (specified by a media type), and are typically u
 Example (PNG image):
 
 ```json
-[snippet](examples/events/004_attachment-png-embedded.json)
+[snippet](examples/events/003_attachment-png-embedded.json)
 ```
 
-Example (Java stack trace):
+### test-run-started {#test-run-started}
+
+A `test-run-started` event signals the start of a test run.
+
+Example:
 
 ```json
-[snippet](examples/events/005_attachment-stacktrace.json)
+[snippet](examples/events/004_test-run-started.json)
 ```
-
-### Cucumber-specific attachments
-
-Cucumber-specific events such as "a step definition was found for this step" or
-"a step failed" could be represented as attachments with special media types, for example:
-
-* `application/vnd.cucumber.step.match+json`, information about the match such as arguments, stepdef line number etc.
-* `text/vnd.cucumber.step.status+plain`, status of a failing step (passed, undefined, pending, failed, skipped)
-
-They could also be represented as distinct events with a separate type. The Cucumber team
-is currently undecided on this. Once consumers evolve we will have more information about
-the tradeoffs of each design. See the [contributing](#contributing) section for details.
 
 ## Implementation
 
 * Cucumber events are formatted as [Newline Delimited JSON](http://ndjson.org)
 * The transport protocol can use one or more of the following:
   * `STDIN`/`STDOUT`
-  * Raw socket
+  * Raw TCP socket
   * W3C WebSocket
   * W3C EventSource (each event is a JSON-encoded event without `event:` type - it's in the payload itself)
 
@@ -100,23 +92,24 @@ the tradeoffs of each design. See the [contributing](#contributing) section for 
 As the event specification evolves to support a richer set of events there are some
 key principles to consider:
 
+#### Extend, don't ammend
+
+Any consumer of the event protocol that also emits the protocol should not faithfully broadcast all events that it has received as input. It can, of course, add extra events to the output stream.
+
+#### Small, specialised events
+
+To keep the protocol flexible, we encourage having many different specialised events, rather than trying to use generic messages for broad purposes.
+
 #### File format agnostic
 
 While Gherkin is currently the only file format that will be used in `source`
 events, no events should assume that all files will be Gherkin documents. This
 allows for alternative document formats in the future.
 
-#### Errors are attachments
-
-When an error occurs, that's just an attachment to a `source` file, with a [special
-media type](#event-attachment). This goes for parse errors, execution errors/exceptions, linting
-errors etc.
-
 ## Event order {#order}
 
 There are a few constraints about the order of events:
 
-* The first event must be [start](#start)
 * A [source](#event-source) event must be received before any
   [attachment](#event-attachment) events referring to it
 
