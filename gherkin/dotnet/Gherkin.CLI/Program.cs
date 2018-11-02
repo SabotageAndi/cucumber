@@ -8,10 +8,7 @@ namespace Gherkin.CLI
     {
         static int Main(string[] argv)
         {
-            var jsonSerializerSettings = new JsonSerializerSettings ();
-            jsonSerializerSettings.Formatting = Formatting.None;
-            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            jsonSerializerSettings.ContractResolver = new FeatureAstJSonContractResolver ();
+            var jsonSerializerSettings = JsonSerializationSettings.CreateJsonSerializerSettings();
 
             List<string> args = new List<string> (argv);
             List<string> paths = new List<string> ();

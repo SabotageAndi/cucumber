@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Gherkin.CLI;
 using Xunit;
@@ -18,6 +19,17 @@ namespace Gherkin.Specs
             var expectedTokensText = LineEndingHelper.NormalizeLineEndings(File.ReadAllText(expectedTokensFile));
 
             Assert.Equal(expectedTokensText, tokensText);
+        }
+
+        [Theory, MemberData(nameof(TestFileProvider.GetInvalidTestFiles), MemberType = typeof(TestFileProvider))]
+        public void TestInvalidTokenMatching(string testFeatureFile)
+        {
+            var featureFileFolder = Path.GetDirectoryName(testFeatureFile);
+            Debug.Assert(featureFileFolder != null);
+
+
+            Assert.Throws<CompositeParserException>(() => TokensGenerator.TokensGenerator.GenerateTokens(testFeatureFile));
+
         }
     }
 }
