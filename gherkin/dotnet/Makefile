@@ -34,15 +34,6 @@ skip_build:
 .compared: .sln_built_debug .run_tests $(TOKENS) $(ASTS) $(PICKLES) $(SOURCES) $(ERRORS)
 	touch $@
 
-acceptance/testdata/%.feature.tokens: testdata/%.feature testdata/%.feature.tokens .sln_built_debug .run_tests
-	mkdir -p `dirname $@`
-
-	bin/gherkin-generate-tokens netcoreapp2.0 $< > $@
-	diff --unified $<.tokens $@
-
-	bin/gherkin-generate-tokens net45 $< > $@
-	diff --unified $<.tokens $@
-
 acceptance/testdata/%.feature.pickles.ndjson: testdata/%.feature testdata/%.feature.pickles.ndjson .sln_built_debug .run_tests
 	mkdir -p `dirname $@`
 
