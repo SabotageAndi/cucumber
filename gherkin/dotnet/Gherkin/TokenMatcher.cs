@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Linq;
-using Gherkin.Ast;
+using Io.Cucumber.Messages;
 
 namespace Gherkin
 {
     public class TokenMatcher : ITokenMatcher
     {
-		private readonly Regex LANGUAGE_PATTERN = new Regex ("^\\s*#\\s*language\\s*:\\s*([a-zA-Z\\-_]+)\\s*$");
+        private readonly Regex LANGUAGE_PATTERN = new Regex("^\\s*#\\s*language\\s*:\\s*([a-zA-Z\\-_]+)\\s*$");
         private readonly IGherkinDialectProvider dialectProvider;
         private GherkinDialect currentDialect;
         private string activeDocStringSeparator = null;
-        private int indentToRemove = 0;
+        private uint indentToRemove = 0;
 
         public GherkinDialect CurrentDialect
         {
@@ -28,7 +28,8 @@ namespace Gherkin
             this.dialectProvider = dialectProvider ?? new GherkinDialectProvider();
         }
 
-        public TokenMatcher(string defaultLanguage) : this(new GherkinDialectProvider(defaultLanguage)) {
+        public TokenMatcher(string defaultLanguage) : this(new GherkinDialectProvider(defaultLanguage))
+        {
         }
 
         public void Reset()
@@ -39,15 +40,15 @@ namespace Gherkin
                 currentDialect = dialectProvider.DefaultDialect;
         }
 
-        protected virtual void SetTokenMatched(Token token, TokenType matchedType, string text = null, string keyword = null, int? indent = null, GherkinLineSpan[] items = null)
+        protected virtual void SetTokenMatched(Token token, TokenType matchedType, string text = null, string keyword = null, uint? indent = null, GherkinLineSpan[] items = null)
         {
             token.MatchedType = matchedType;
             token.MatchedKeyword = keyword;
             token.MatchedText = text;
             token.MatchedItems = items;
             token.MatchedGherkinDialect = CurrentDialect;
-            token.MatchedIndent = indent ?? (token.Line == null ? 0 : token.Line.Indent);
-            token.Location = new Ast.Location(token.Location.Line, token.MatchedIndent + 1);
+            token.MatchedIndent = indent ?? (token.Line?.Indent ?? 0);
+            token.Location = new Location() { Line = token.Location.Line, Column = (uint)(token.MatchedIndent + 1) };
         }
 
         public bool Match_EOF(Token token)
@@ -62,7 +63,7 @@ namespace Gherkin
 
         public bool Match_Other(Token token)
         {
-            var text = token.Line.GetLineText(indentToRemove); //take the entire line, except removing DocString indents
+            var text = token.Line.GetLineText((int) indentToRemove); //take the entire line, except removing DocString indents
             SetTokenMatched(token, TokenType.Other, UnescapeDocString(text), indent: 0);
             return true;
         }
@@ -90,7 +91,7 @@ namespace Gherkin
 
         private ParserException CreateTokenMatcherException(Token token, string message)
         {
-            return new AstBuilderException(message, new Ast.Location(token.Location.Line, token.Line.Indent + 1));
+            return new AstBuilderException(message, new Location() { Line = token.Location.Line, Column = token.Line.Indent + 1 });
         }
 
         public bool Match_Language(Token token)

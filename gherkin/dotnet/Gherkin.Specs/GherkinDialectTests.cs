@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Io.Cucumber.Messages;
+using Xunit;
 
 namespace Gherkin.Specs
 {
@@ -9,7 +10,7 @@ namespace Gherkin.Specs
         {
             var x = new GherkinDialectProvider();
             
-            Assert.Throws<NoSuchLanguageException>(() => x.GetDialect("nosuchlang", new Ast.Location(1, 2)));            
+            Assert.Throws<NoSuchLanguageException>(() => x.GetDialect("nosuchlang", new Location(){Line = 1, Column = 2}));            
         }
 
         [Fact]

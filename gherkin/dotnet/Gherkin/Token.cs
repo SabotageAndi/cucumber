@@ -1,4 +1,5 @@
-﻿using Gherkin.Ast;
+﻿
+using Io.Cucumber.Messages;
 
 namespace Gherkin
 {
@@ -10,11 +11,11 @@ namespace Gherkin
         public string MatchedKeyword { get; set; }
         public string MatchedText { get; set; }
         public GherkinLineSpan[] MatchedItems { get; set; }
-        public int MatchedIndent { get; set; }
+        public uint MatchedIndent { get; set; }
         public GherkinDialect MatchedGherkinDialect { get; set; }
-        public Ast.Location Location { get; set; }
+        public Location Location { get; set; }
 
-        public Token(IGherkinLine line, Ast.Location location)
+        public Token(IGherkinLine line, Location location)
         {
             Line = line;
             Location = location;

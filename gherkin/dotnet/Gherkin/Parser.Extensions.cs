@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Gherkin.Ast;
+using Io.Cucumber.Messages;
 
 namespace Gherkin
 {

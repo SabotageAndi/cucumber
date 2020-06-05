@@ -10,7 +10,7 @@ namespace Gherkin
         /// <summary>
         /// One-based line number
         /// </summary>
-        int LineNumber { get; }
+        uint LineNumber { get; }
 
         /// <summary>
         /// Called by the parser to indicate non-streamed reading (e.g. during look-ahead).
@@ -23,7 +23,7 @@ namespace Gherkin
         /// <summary>
         /// The number of whitespace characters in the beginning of the line.
         /// </summary>
-        int Indent { get; }
+        uint Indent { get; }
 
         /// <summary>
         /// Gets if the line is empty or contains whitespaces only.

@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gherkin.Ast;
+using Io.Cucumber.Messages;
 
 namespace Gherkin
 {
     public abstract class ParserException : Exception
     {
-        public Ast.Location Location { get; private set; }
+        public Location Location { get; private set; }
 
-        protected ParserException(string message, Ast.Location location = null) : base(GetMessage(message, location))
+        protected ParserException(string message, Location location = null) : base(GetMessage(message, location))
         {
             Location = location;
         }
 
-        private static string GetMessage(string message, Ast.Location location)
+        private static string GetMessage(string message, Location location)
         {
             if (location == null)
                 return message;
@@ -26,7 +26,7 @@ namespace Gherkin
 
     public class AstBuilderException : ParserException
     {
-        public AstBuilderException(string message, Ast.Location location) : base(message, location)
+        public AstBuilderException(string message, Location location) : base(message, location)
         {
         }
 
@@ -34,7 +34,7 @@ namespace Gherkin
 
     public class NoSuchLanguageException : ParserException
     {
-        public NoSuchLanguageException(string language, Ast.Location location = null) :
+        public NoSuchLanguageException(string language, Location location = null) :
             base("Language not supported: " + language, location)
         {
             if (language == null) throw new ArgumentNullException("language");
@@ -50,11 +50,15 @@ namespace Gherkin
             if (receivedToken == null) throw new ArgumentNullException("receivedToken");
         }
 
-        private static Ast.Location GetLocation(Token receivedToken)
+        private static Location GetLocation(Token receivedToken)
         {
             return receivedToken.IsEOF || receivedToken.Location.Column > 1
                 ? receivedToken.Location
-                : new Ast.Location(receivedToken.Location.Line, receivedToken.Line.Indent + 1);
+                : new Location()
+                {
+                    Line = receivedToken.Location.Line,
+                    Column = receivedToken.Line.Indent + 1
+                };
         }
 
     }

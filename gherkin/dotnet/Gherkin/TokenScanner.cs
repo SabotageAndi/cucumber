@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Gherkin.Ast;
+using Io.Cucumber.Messages;
 
 namespace Gherkin
 {
@@ -15,7 +15,7 @@ namespace Gherkin
     /// </summary>
     public class TokenScanner : ITokenScanner
     {
-        protected int lineNumber = 0;
+        protected uint lineNumber = 0;
         protected readonly TextReader reader;
 
         public TokenScanner(TextReader reader)
@@ -26,7 +26,10 @@ namespace Gherkin
         public virtual Token Read()
         {
             var line = reader.ReadLine();
-            var location = new Ast.Location(++lineNumber);
+            var location = new Location()
+            {
+                Line = ++lineNumber
+            };
             return line == null ? new Token(null, location) : new Token(new GherkinLine(line, lineNumber), location);
         }
     }

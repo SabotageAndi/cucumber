@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gherkin.Events;
-using Gherkin.Stream;
 
 namespace Gherkin.CLI
 {

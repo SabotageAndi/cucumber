@@ -8,9 +8,9 @@ namespace Gherkin
     {
         private readonly string lineText;
         private readonly string trimmedLineText;
-        public int LineNumber { get; private set; }
+        public uint LineNumber { get; private set; }
 
-        public GherkinLine(string line, int lineNumber)
+        public GherkinLine(string line, uint lineNumber)
         {
             this.LineNumber = lineNumber;
 
@@ -23,10 +23,7 @@ namespace Gherkin
             //nop
         }
 
-        public int Indent
-        {
-            get { return lineText.Length - trimmedLineText.Length; }
-        }
+        public uint Indent => (uint)(lineText.Length - trimmedLineText.Length);
 
         public bool IsEmpty()
         {
@@ -54,7 +51,7 @@ namespace Gherkin
             if (indentToRemove < 0 || indentToRemove > Indent)
                 return trimmedLineText;
 
-            return lineText.Substring(indentToRemove);
+            return lineText.Substring((int) indentToRemove);
         }
 
         public string GetRestTrimmed(int length)
@@ -64,13 +61,14 @@ namespace Gherkin
 
         public IEnumerable<GherkinLineSpan> GetTags()
         {
-            int position = Indent;
+            uint position = Indent;
+
             foreach (string item in trimmedLineText.Split())
             {
                 if (item.Length > 0)
                 {
                     yield return new GherkinLineSpan(position + 1, item);
-                    position += item.Length;
+                    position += (uint)item.Length;
                 }
                 position++; // separator
             }
@@ -90,7 +88,7 @@ namespace Gherkin
                     if (cellText.Length == 0)
                         cellPosition = item.Item2;
 
-                    yield return new GherkinLineSpan(Indent + cellPosition + 1, cellText);
+                    yield return new GherkinLineSpan((uint)(Indent + cellPosition + 1), cellText);
                 }
 
                 isBeforeFirst = false;
